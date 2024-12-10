@@ -4,29 +4,43 @@ import pool from '../config/db';import { RequestWithUser } from '../types/Reques
 
 // Function to fetch the dashboard data
 export const getDashboard = async (req: RequestWithUser, res: Response): Promise<void> => {
-  // const userId = req.user?.user_id;
-
-  // if (!userId) {
-  //   res.status(401).json({ error: 'Unauthorized access' });
-  //   return;
-  // }
-
   try {
-    // Fetch devices associated with the user
+    // Fetch devices along with their latest value
     const devices = await pool.query(
-      'SELECT * FROM device ',
-      // [userId]
+      `
+      SELECT 
+        d.name AS name,
+        d.layer AS layer,
+        d.unit AS unit,
+        d.status AS status,
+        d.type AS type,
+        latest_data.value AS value
+      FROM device d
+      LEFT JOIN (
+        SELECT 
+          device_id,
+          value,
+          timestamp
+        FROM data
+        WHERE (device_id, timestamp) IN (
+          SELECT device_id, MAX(timestamp) AS max_timestamp
+          FROM data
+          GROUP BY device_id
+        )
+      ) latest_data ON d.device_id = latest_data.device_id
+      `
     );
 
-    // Respond with the fetched devices
-  res.status(200).json(devices.rows);
-  return;
+    // Respond with the fetched data
+    res.status(200).json(devices.rows);
+    return;
   } catch (error: any) {
     console.error('Error fetching dashboard:', error.message);
     res.status(500).json({ error: 'Error fetching dashboard' });
     return;
   }
 };
+
 
 // Function to fetch detailed dashboard data for a specific layer
 export const getDashboardDetail = async (req: RequestWithUser, res: Response): Promise<void> => {
