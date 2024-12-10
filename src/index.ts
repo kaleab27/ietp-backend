@@ -4,6 +4,7 @@ import apiRoutes from './routes/apiRoutes';
 import io from './socketHandler';
 const cors = require("cors");
 
+
 dotenv.config();
 const app = express();
 
