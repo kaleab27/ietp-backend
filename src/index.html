@@ -242,6 +242,7 @@
         };
 
         let currentLayer = null;
+        const chartInstances = {};
 
         function showDashboard() {
             document.getElementById("dashboard").classList.remove("hidden");
@@ -374,68 +375,53 @@
             renderSingleChart("monthly-analysis", analysis.monthly);
         }
 
-    // Store chart instances in a map
-const chartInstances = {};
+        function renderSingleChart(canvasId, data) {
+            const ctx = document.getElementById(canvasId).getContext("2d");
 
-function renderSingleChart(canvasId, data) {
-    const ctx = document.getElementById(canvasId).getContext("2d");
-
-    // Destroy the existing chart if it exists
-    if (chartInstances[canvasId]) {
-        chartInstances[canvasId].destroy();
-    }
-
-    // Create a new chart and store its instance
-    chartInstances[canvasId] = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: ["Highest", "Lowest", "Average"],
-            datasets: [{
-                label: "Values",
-                data: [data.highest, data.lowest, data.average],
-                backgroundColor: ["#ff6384", "#36a2eb", "#ffcd56"],
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-        },
-    });
-}
-
-        document.getElementById("add-device-form").addEventListener("submit", async (event) => {
-            event.preventDefault();
-            const name = document.getElementById("device-name").value;
-            const value = parseFloat(document.getElementById("device-value").value);
-            const unit = document.getElementById("device-unit").value;
-
-            if (!name || isNaN(value) || !unit) {
-                alert("Please fill in all fields.");
-                return;
+            if (chartInstances[canvasId]) {
+                chartInstances[canvasId].destroy();
             }
 
-            try {
-                const response = await fetch(`http://localhost:5000/api/add-device/${currentLayer}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ name, value, unit }),
-                });
+            chartInstances[canvasId] = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Highest", "Lowest", "Average"],
+                    datasets: [{
+                        label: "Values",
+                        data: [...values],
+                        backgroundColor: ["#ff6384", "#36a2eb", "#ffcd56"],
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                },
+            });
+        }
 
-                if (response.ok) {
-                    alert("Device added successfully!");
-                    showLayerDetails(currentLayer);
-                } else {
-                    alert("Failed to add device.");
-                }
-            } catch (error) {
-                console.error("Failed to add device:", error);
-                alert("An error occurred while adding the device.");
-            }
-        });
+        // WebSocket for real-time updates
+        const socket = new WebSocket("ws://localhost:5001"); // Replace with your WebSocket server URL
 
-        fetchDashboardData();
+        socket.onopen = () => {
+            console.log("WebSocket connection established.");
+        };
+
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log("Real-time update received:", message);
+
+            // Update the dashboard with new data
+            updateDashboardWithNewData(message);
+        };
+
+        function updateDashboardWithNewData(data) {
+            // This function should be adapted based on the structure of the incoming data
+            console.log("Updating dashboard with new data:", data);
+            fetchDashboardData(); // Refresh the data from the server
+        }
+
+        // Initialize the dashboard on load
+        window.onload = fetchDashboardData;
     </script>
 </body>
 </html>
