@@ -5,8 +5,8 @@ import { Device } from '../models/types';
 import { type } from 'os';
 
 export const registerDevice = async (req: RequestWithUser, res: Response): Promise<void> => {
-  const { device_id, name, layer, unit, type, critical_high, critical_low } = req.body;
-  const userId = '12345678'; // Extracted from authentication middleware
+  const { name, layer, unit, type, critical_high, critical_low } = req.body;
+  const userId = '8c37b2dc-bb4e-4a2c-9967-0b1e1848595b'; // Extracted from authentication middleware
 
   // Validate user ID
   // if (!userId) {
@@ -15,7 +15,8 @@ export const registerDevice = async (req: RequestWithUser, res: Response): Promi
   // }
 
   // Validate required fields
-  if (!device_id || !name || !layer || !unit || !type) {
+  console.log(name , layer ,unit ,type)
+  if ( !name || !unit || !type) {
     res.status(400).json({ error: 'Missing required fields' });
     return; // Explicitly end the execution here for safety
   }
@@ -23,9 +24,8 @@ export const registerDevice = async (req: RequestWithUser, res: Response): Promi
   try {
     // Insert the new device into the database
     const result = await pool.query(
-      'INSERT INTO "device" (device_id, name, layer, unit, type, critical_high, critical_low, user_id, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8,$9) RETURNING *',
+      'INSERT INTO "device" (name, layer, unit, type, critical_high, critical_low, user_id, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
       [
-        device_id,
         name,
         layer,
         unit,
