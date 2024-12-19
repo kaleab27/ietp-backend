@@ -5,14 +5,14 @@ import { Device } from '../models/types';
 import { type } from 'os';
 
 export const registerDevice = async (req: RequestWithUser, res: Response): Promise<void> => {
-  const { name, layer, unit, type, critical_high, critical_low } = req.body;
-  const userId = '8c37b2dc-bb4e-4a2c-9967-0b1e1848595b'; // Extracted from authentication middleware
+  const userId = req.user?.user_id; // Extracted from authentication middleware
+  const { name, layer, unit, type, area ,critical_high, critical_low } = req.body;
 
   // Validate user ID
-  // if (!userId) {
-  //   res.status(401).json({ error: 'Unauthorized access' });
-  //   return; // Explicitly end the execution here for safety
-  // }
+  if (!userId) {
+    res.status(401).json({ error: 'Unauthorized access' });
+    return; // Explicitly end the execution here for safety
+  }
 
   // Validate required fields
   console.log(name , layer ,unit ,type)
@@ -24,7 +24,7 @@ export const registerDevice = async (req: RequestWithUser, res: Response): Promi
   try {
     // Insert the new device into the database
     const result = await pool.query(
-      'INSERT INTO "device" (name, layer, unit, type, critical_high, critical_low, user_id, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      'INSERT INTO "device" (name, layer, unit, type, critical_high, critical_low, user_id, status , area) VALUES ($1, $2, $3, $4, $5, $6, $7, $8 , $9) RETURNING *',
       [
         name,
         layer,
@@ -34,6 +34,7 @@ export const registerDevice = async (req: RequestWithUser, res: Response): Promi
         critical_low || null,
         userId,
         type === 'motor' ? 'inactive' : 'active', // Default status based on device type
+        area,
       ]
     );
 
@@ -55,3 +56,9 @@ export const registerDevice = async (req: RequestWithUser, res: Response): Promi
     }
   }
 };
+
+// export const deleteDevice = async (req:RequestWithUser , res: Response):Promise<void>=>{
+//   const userId = req.user?.user_id; // Extracted from authentication middleware
+//   const { device_id} = req.body;
+
+// }

@@ -14,6 +14,7 @@ export const createTables = async (_req: Request, res: Response): Promise<void> 
       device_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       name VARCHAR(255) NOT NULL,
       layer INT NOT NULL CHECK (layer >= 0),
+      area INT,
       unit VARCHAR(255) NOT NULL,
       status VARCHAR(255) NOT NULL CHECK (status IN ('active', 'inactive')),
       type VARCHAR(255) NOT NULL CHECK (type IN ('motor', 'sensor')),

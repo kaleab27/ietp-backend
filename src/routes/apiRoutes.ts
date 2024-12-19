@@ -29,11 +29,13 @@ router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 
 // Dashboard Routes
-router.get('/dashboard', dashboardController.getDashboard);
-router.get('/dashboard-detail/:layer',  dashboardController.getDashboardDetail);
+router.get('/dashboard', authenticateToken,dashboardController.getDashboard);
+router.get('/dashboard-detail/:layer',   authenticateToken ,dashboardController.getDashboardDetail);
 
 // Device Routes
 router.post('/device',deviceController.registerDevice);
+
+// router.delete('/delete-device',authenticateToken , )
 
 // Reading Routes
 router.post('/reading',readingController.postReading);

@@ -14,7 +14,9 @@ export type User = {
   export type Device = {
     device_id: string; // UUID
     name: string;
-    layer: number; // non-negative
+    layer: number;
+    area: number;
+     // non-negative
     unit: string;
     status: 'active' | 'inactive';
     type: 'motor' | 'sensor';

@@ -55,7 +55,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     // Generate a JSON Web Token
     const token = jwt.sign(
-      { userId: user.user_id, name: user.name },'default_secret', // Provide a fallback for JWT_SECRET
+      { user_id: user.user_id, name: user.name },'default_secret', // Provide a fallback for JWT_SECRET
       { expiresIn: '1h' }
     );
 
