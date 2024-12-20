@@ -29,7 +29,6 @@ export const postReading = async (req: RequestWithUser, res: Response): Promise<
     );
 
     const device = deviceResult.rows[0];
-    console.log('Device details fetched:', device);
 
     if (!device) {
       res.status(404).json({ error: 'Device not found' });
@@ -46,10 +45,8 @@ export const postReading = async (req: RequestWithUser, res: Response): Promise<
       } else if (critical_low !== null && value < critical_low) {
         notificationMessage = `Warning: ${name} value ${value} is below critical low (${critical_low})!`;
       }
-      console.log('Notification message:', notificationMessage);
 
       if (notificationMessage) {
-        console.log('Emitting notification...');
         io.emit('notification', {
           device: name,
           message: notificationMessage,
@@ -59,7 +56,6 @@ export const postReading = async (req: RequestWithUser, res: Response): Promise<
     }
 
     // Emit real-time data updates
-    console.log('Emitting data update...');
     io.emit('dataUpdate', {
       name: name,
       device_id: newData.device_id,

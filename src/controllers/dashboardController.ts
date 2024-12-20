@@ -1,7 +1,6 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import pool from '../config/db';
 import { RequestWithUser } from '../types/RequestWithUser';
-import io from '../socketHandler';
 
 // Function to fetch the dashboard data
 export const getDashboard = async (req: RequestWithUser, res: Response): Promise<void> => {

@@ -9,7 +9,6 @@ export const authenticateToken = (
   next: NextFunction
 ): void => {
   const authHeader = req.headers['authorization'];
-  console.log(authHeader);
 
   if (!authHeader ) {
     res.status(401).json({ message: 'Authorization header missing or malformed' });
@@ -22,7 +21,6 @@ export const authenticateToken = (
   try {
     const decoded = jwt.verify(token, 'default_secret') as User;
     req.user = decoded;
-    console.log(decoded) // Attach the decoded user data to the request
     next();
   } catch (err) {
     console.error('Token verification error:', err);

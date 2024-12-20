@@ -33,9 +33,7 @@ router.get('/dashboard', authenticateToken,dashboardController.getDashboard);
 router.get('/dashboard-detail/:layer',   authenticateToken ,dashboardController.getDashboardDetail);
 
 // Device Routes
-router.post('/device',deviceController.registerDevice);
-
-// router.delete('/delete-device',authenticateToken , )
+router.post('/device',authenticateToken, deviceController.registerDevice);
 
 // Reading Routes
 router.post('/reading',readingController.postReading);
