@@ -8,7 +8,9 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: '*', // Allow all origins (not recommended for production)
+}));
 app.use('/api', apiRoutes);
 
 const PORT = process.env.PORT || 5000;
